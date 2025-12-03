@@ -495,11 +495,11 @@ async def predict_fusion(
             vessel_density=float(metadata['vessel_density_avg']),
             features=VesselFeatures(
                 vessel_density=float(metadata['vessel_density_avg']),
-                peripheral_density=0.0,  # Would need to extract from full features
-                avg_vessel_width=0.0,
-                fractal_dimension=0.0,
-                branching_density=0.0,
-                avg_tortuosity=0.0
+                peripheral_density=float(metadata['peripheral_density_avg']),
+                avg_vessel_width=float(metadata['avg_vessel_width_avg']),
+                fractal_dimension=float(metadata['fractal_dimension_avg']),
+                branching_density=float(metadata['branching_density_avg']),
+                avg_tortuosity=float(metadata['avg_tortuosity_avg'])
             ),
             segmentation_mask_base64=vessel_mask_b64
         )

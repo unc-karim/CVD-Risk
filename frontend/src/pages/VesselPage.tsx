@@ -15,7 +15,10 @@ import {
   Typography,
   Grow,
 } from '@mui/material';
+import ScienceIcon from '@mui/icons-material/Science';
 import ImageUpload from '../components/ImageUpload';
+import MetricCard from '../components/MetricCard';
+import ExportButtons from '../components/ExportButtons';
 import api, { VesselSegmentation } from '../services/api';
 
 interface VesselPageProps {
@@ -68,41 +71,50 @@ const VesselPage: React.FC<VesselPageProps> = ({ apiReady }) => {
   };
 
   return (
-    <Box sx={{ background: 'linear-gradient(135deg, #F8F5FF 0%, #EDE7FF 100%)', minHeight: '100vh' }}>
+    <Box sx={{ background: '#ffffff', minHeight: '100vh' }}>
       {/* Header */}
       <Box
         sx={{
-          background: 'linear-gradient(135deg, #6A4DF5 0%, #A680FF 100%)',
+          background: 'linear-gradient(135deg, #5939E0 0%, #9D7FFF 100%)',
           color: 'white',
-          py: { xs: 4, md: 5 },
-          px: { xs: 3, sm: 4 },
-          mb: 6,
-          borderBottomLeftRadius: { xs: 24, sm: 32 },
-          borderBottomRightRadius: { xs: 24, sm: 32 },
+          py: { xs: 3, sm: 4, md: 5 },
+          px: { xs: 2, sm: 3, md: 4 },
+          mb: { xs: 4, md: 6 },
+          borderBottomLeftRadius: { xs: 16, sm: 24, md: 32 },
+          borderBottomRightRadius: { xs: 16, sm: 24, md: 32 },
           boxShadow: '0 8px 32px rgba(106, 77, 245, 0.25)',
         }}
       >
         <Container maxWidth="lg">
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: { xs: 2, sm: 4 } }}>
+          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'flex-start', sm: 'center' }, justifyContent: 'space-between', gap: { xs: 3, sm: 2, md: 4 } }}>
             <Box sx={{ flex: 1 }}>
-              <Typography variant="h2" sx={{ fontWeight: 800, mb: 1, fontSize: { xs: '1.8rem', sm: '2rem', md: '2.4rem' }, letterSpacing: '-0.3px' }}>
+              <Typography
+                component="h1"
+                variant="h2"
+                sx={{
+                  mb: 1,
+                }}
+              >
                 Vessel Segmentation
               </Typography>
-              <Typography variant="body1" sx={{ opacity: 0.9, fontWeight: 400, fontSize: { xs: '0.95rem', sm: '1rem' }, lineHeight: 1.5 }}>
+              <Typography variant="body1" sx={{ opacity: 0.85 }}>
                 Automatic analysis of retinal blood vessel features
               </Typography>
             </Box>
-            <Box sx={{ display: 'flex', gap: 2, flexShrink: 0, flexWrap: { xs: 'wrap', sm: 'nowrap' } }}>
+            <Box sx={{ display: 'flex', gap: 1.5, flexShrink: 0, flexWrap: 'wrap', justifyContent: { xs: 'flex-start', sm: 'flex-end' } }}>
               <Button
                 onClick={() => navigate('/')}
                 disabled={loading}
+                variant="text"
                 sx={{
-                  textTransform: 'none',
-                  backgroundColor: 'rgba(255,255,255,0.2)',
                   color: 'white',
                   fontWeight: 600,
-                  transition: 'all 0.15s ease',
-                  '&:hover': { backgroundColor: 'rgba(255,255,255,0.3)', transform: 'scale(1.02)' },
+                  fontSize: '0.95rem',
+                  py: 1,
+                  px: 2,
+                  '&:hover': {
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                  },
                 }}
               >
                 ← Home
@@ -110,13 +122,19 @@ const VesselPage: React.FC<VesselPageProps> = ({ apiReady }) => {
               <Button
                 onClick={handleClearAll}
                 disabled={loading}
-                variant="contained"
+                variant="outlined"
                 sx={{
-                  backgroundColor: 'white',
-                  color: '#6A4DF5',
-                  fontWeight: 700,
+                  color: 'white',
+                  borderColor: 'white',
+                  fontWeight: 600,
+                  fontSize: '0.95rem',
+                  py: 1,
+                  px: 3,
                   transition: 'all 0.15s ease',
-                  '&:hover': { backgroundColor: '#f5f5f5', transform: 'scale(1.02)' },
+                  '&:hover': {
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    borderColor: 'white',
+                  },
                 }}
               >
                 Clear All
@@ -147,7 +165,17 @@ const VesselPage: React.FC<VesselPageProps> = ({ apiReady }) => {
                 onClick={handlePredict}
                 disabled={!image || loading || !apiReady}
                 size="large"
-                sx={{ mt: 3, fontWeight: 600, fontSize: '1rem' }}
+                sx={{
+                  mt: 3,
+                  fontWeight: 600,
+                  fontSize: '1rem',
+                  backgroundColor: '#5939E0',
+                  boxShadow: '0 2px 8px rgba(89, 57, 224, 0.2)',
+                  '&:hover': {
+                    backgroundColor: '#4A2DB0',
+                    boxShadow: '0 4px 12px rgba(89, 57, 224, 0.25)',
+                  },
+                }}
               >
                 {loading ? (
                   <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
@@ -155,7 +183,10 @@ const VesselPage: React.FC<VesselPageProps> = ({ apiReady }) => {
                     Analyzing Vessels...
                   </Box>
                 ) : (
-                  '🔬 Segment Vessels'
+                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                    <ScienceIcon sx={{ fontSize: '1.2rem' }} />
+                    Segment Vessels
+                  </Box>
                 )}
               </Button>
               {image && (
@@ -197,65 +228,52 @@ const VesselPage: React.FC<VesselPageProps> = ({ apiReady }) => {
                         Vessel Metrics
                       </Typography>
                       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                        {/* Main Vessel Density */}
-                        <Box sx={{ p: 1.5, backgroundColor: '#f0f5ff', borderRadius: 1, border: '1px solid #bbdefb' }}>
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
-                            <Typography variant="body2" sx={{ fontWeight: 500, color: '#555' }}>
-                              Vessel Density
-                            </Typography>
-                            <Typography variant="h6" sx={{ fontWeight: 700, color: '#0066cc' }}>
-                              {result.vessel_density.toFixed(3)}
-                            </Typography>
-                          </Box>
-                          <Typography variant="caption" sx={{ color: '#999' }}>
-                            Proportion of vessel pixels in the retinal area
-                          </Typography>
-                        </Box>
-
-                        {/* Additional Features Grid */}
+                        <MetricCard
+                          variant="secondary"
+                          label="Vessel Density"
+                          value={result.vessel_density.toFixed(3)}
+                          description="Proportion of vessel pixels in the retinal area"
+                          fullWidth
+                        />
                         <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1 }}>
-                          <Box sx={{ p: 1.5, backgroundColor: '#f5f5f5', borderRadius: 1 }}>
-                            <Typography variant="caption" sx={{ color: '#666', display: 'block', mb: 0.5, fontWeight: 500 }}>
-                              Peripheral Density
-                            </Typography>
-                            <Typography variant="body2" sx={{ fontWeight: 700, color: '#0066cc' }}>
-                              {result.features.peripheral_density.toFixed(3)}
-                            </Typography>
-                          </Box>
-                          <Box sx={{ p: 1.5, backgroundColor: '#f5f5f5', borderRadius: 1 }}>
-                            <Typography variant="caption" sx={{ color: '#666', display: 'block', mb: 0.5, fontWeight: 500 }}>
-                              Avg Vessel Width
-                            </Typography>
-                            <Typography variant="body2" sx={{ fontWeight: 700, color: '#0066cc' }}>
-                              {result.features.avg_vessel_width.toFixed(2)}
-                            </Typography>
-                          </Box>
-                          <Box sx={{ p: 1.5, backgroundColor: '#f5f5f5', borderRadius: 1 }}>
-                            <Typography variant="caption" sx={{ color: '#666', display: 'block', mb: 0.5, fontWeight: 500 }}>
-                              Fractal Dimension
-                            </Typography>
-                            <Typography variant="body2" sx={{ fontWeight: 700, color: '#0066cc' }}>
-                              {result.features.fractal_dimension.toFixed(3)}
-                            </Typography>
-                          </Box>
-                          <Box sx={{ p: 1.5, backgroundColor: '#f5f5f5', borderRadius: 1 }}>
-                            <Typography variant="caption" sx={{ color: '#666', display: 'block', mb: 0.5, fontWeight: 500 }}>
-                              Branching Density
-                            </Typography>
-                            <Typography variant="body2" sx={{ fontWeight: 700, color: '#0066cc' }}>
-                              {result.features.branching_density.toFixed(4)}
-                            </Typography>
-                          </Box>
-                          <Box sx={{ p: 1.5, backgroundColor: '#f5f5f5', borderRadius: 1, gridColumn: '1 / -1' }}>
-                            <Typography variant="caption" sx={{ color: '#666', display: 'block', mb: 0.5, fontWeight: 500 }}>
-                              Average Tortuosity
-                            </Typography>
-                            <Typography variant="body2" sx={{ fontWeight: 700, color: '#0066cc' }}>
-                              {result.features.avg_tortuosity.toFixed(3)}
-                            </Typography>
+                          <MetricCard
+                            variant="compact"
+                            label="Peripheral Density"
+                            value={result.features.peripheral_density.toFixed(3)}
+                          />
+                          <MetricCard
+                            variant="compact"
+                            label="Avg Vessel Width"
+                            value={result.features.avg_vessel_width.toFixed(2)}
+                          />
+                          <MetricCard
+                            variant="compact"
+                            label="Fractal Dimension"
+                            value={result.features.fractal_dimension.toFixed(3)}
+                          />
+                          <MetricCard
+                            variant="compact"
+                            label="Branching Density"
+                            value={result.features.branching_density.toFixed(4)}
+                          />
+                          <Box sx={{ gridColumn: '1 / -1' }}>
+                            <MetricCard
+                              variant="compact"
+                              label="Average Tortuosity"
+                              value={result.features.avg_tortuosity.toFixed(3)}
+                              fullWidth
+                            />
                           </Box>
                         </Box>
                       </Box>
+                      <ExportButtons
+                        data={{
+                          vessel_density: result.vessel_density,
+                          features: result.features,
+                          timestamp: new Date().toISOString(),
+                        }}
+                        filename="vessel_segmentation"
+                      />
                     </Paper>
                   </Box>
                 </Grow>

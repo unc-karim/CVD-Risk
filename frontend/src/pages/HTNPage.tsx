@@ -15,7 +15,13 @@ import {
   Grow,
   Typography,
 } from '@mui/material';
+import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import SearchIcon from '@mui/icons-material/Search';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import WarningIcon from '@mui/icons-material/Warning';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ImageUpload from '../components/ImageUpload';
+import ExportButtons from '../components/ExportButtons';
 import api, { HTNPrediction } from '../services/api';
 
 interface HomePageProps {
@@ -77,59 +83,54 @@ const HTNPage: React.FC<HomePageProps> = ({ apiReady }) => {
   return (
     <Box
       sx={{
-        background: 'linear-gradient(135deg, #F8F5FF 0%, #EDE7FF 100%)',
-        position: 'fixed',
-        width: '100vw',
-        height: '100vh',
-        left: 0,
-        top: 0,
-        py: 0,
-        overflowY: 'auto',
+        width: '100%',
+        minHeight: '100vh',
+        background: '#ffffff',
+        display: 'flex',
+        flexDirection: 'column',
       }}
     >
       {/* Page Header */}
       <Box
         sx={{
-          background: 'linear-gradient(135deg, #6A4DF5 0%, #A680FF 100%)',
+          background: 'linear-gradient(135deg, #5939E0 0%, #9D7FFF 100%)',
           color: 'white',
-          py: { xs: 4, md: 5 },
-          px: { xs: 3, sm: 4 },
-          mb: 6,
-          borderBottomLeftRadius: { xs: 24, sm: 32 },
-          borderBottomRightRadius: { xs: 24, sm: 32 },
+          py: { xs: 3, sm: 4, md: 5 },
+          px: { xs: 2, sm: 3, md: 4 },
+          mb: { xs: 4, md: 6 },
+          borderBottomLeftRadius: { xs: 16, sm: 24, md: 32 },
+          borderBottomRightRadius: { xs: 16, sm: 24, md: 32 },
           boxShadow: '0 8px 32px rgba(106, 77, 245, 0.25)',
         }}
       >
-        <Box sx={{ maxWidth: 1200, mx: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: { xs: 2, sm: 4 } }}>
+        <Box sx={{ maxWidth: 1200, mx: 'auto', display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'flex-start', sm: 'center' }, justifyContent: 'space-between', gap: { xs: 3, sm: 2, md: 4 } }}>
           <Box sx={{ flex: 1 }}>
             <Typography
+              component="h1"
               variant="h2"
               sx={{
-                fontWeight: 800,
                 mb: 1,
-                fontSize: { xs: '1.8rem', sm: '2rem', md: '2.4rem' },
-                letterSpacing: '-0.3px',
               }}
             >
               Hypertensive Retinopathy Detection
             </Typography>
-            <Typography variant="body1" sx={{ opacity: 0.9, fontWeight: 400, fontSize: { xs: '0.95rem', sm: '1rem' }, lineHeight: 1.5 }}>
+            <Typography variant="body1" sx={{ opacity: 0.85 }}>
               AI-powered classification from retinal fundus imaging
             </Typography>
           </Box>
-          <Box sx={{ display: 'flex', gap: 2, flexShrink: 0, flexWrap: { xs: 'wrap', sm: 'nowrap' } }}>
+          <Box sx={{ display: 'flex', gap: 1.5, flexShrink: 0, flexWrap: 'wrap', justifyContent: { xs: 'flex-start', sm: 'flex-end' } }}>
             <Button
               onClick={() => navigate('/')}
               disabled={loading}
+              variant="text"
               sx={{
-                textTransform: 'none',
-                backgroundColor: 'rgba(255,255,255,0.2)',
                 color: 'white',
                 fontWeight: 600,
-                transition: 'all 0.15s ease',
+                fontSize: '0.95rem',
+                py: 1,
+                px: 2,
                 '&:hover': {
-                  backgroundColor: 'rgba(255,255,255,0.3)',
-                  transform: 'scale(1.02)',
+                  backgroundColor: 'rgba(255,255,255,0.1)',
                 },
               }}
             >
@@ -138,15 +139,18 @@ const HTNPage: React.FC<HomePageProps> = ({ apiReady }) => {
             <Button
               onClick={handleClearAll}
               disabled={!image && !result && !error}
-              variant="contained"
+              variant="outlined"
               sx={{
-                backgroundColor: 'white',
-                color: '#6A4DF5',
-                fontWeight: 700,
+                color: 'white',
+                borderColor: 'white',
+                fontWeight: 600,
+                fontSize: '0.95rem',
+                py: 1,
+                px: 3,
                 transition: 'all 0.15s ease',
                 '&:hover': {
-                  backgroundColor: '#f5f5f5',
-                  transform: 'scale(1.02)',
+                  backgroundColor: 'rgba(255,255,255,0.1)',
+                  borderColor: 'white',
                 },
               }}
             >
@@ -156,7 +160,7 @@ const HTNPage: React.FC<HomePageProps> = ({ apiReady }) => {
         </Box>
       </Box>
 
-      <Box sx={{ width: '100%', maxWidth: 800, mx: 'auto', px: { xs: 2, sm: 3 }, pb: 6 }}>
+      <Box sx={{ width: '100%', maxWidth: 900, mx: 'auto', px: { xs: 2, sm: 3, md: 4 }, py: 6 }}>
         <Grid container spacing={3}>
           {/* Input Section */}
           <Grid item xs={12}>
@@ -171,17 +175,19 @@ const HTNPage: React.FC<HomePageProps> = ({ apiReady }) => {
                 mx: 'auto',
               }}
             >
-              <Typography
-                sx={{
-                  mb: 3,
-                  fontWeight: 700,
-                  color: '#6A4DF5',
-                  fontSize: '1.1rem',
-                  letterSpacing: '-0.2px',
-                }}
-              >
-                📸 Upload Fundus Image
-              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
+                <CameraAltIcon sx={{ color: '#5939E0', fontSize: '1.3rem' }} />
+                <Typography
+                  sx={{
+                    fontWeight: 700,
+                    color: '#5939E0',
+                    fontSize: '1.1rem',
+                    letterSpacing: '-0.2px',
+                  }}
+                >
+                  Upload Fundus Image
+                </Typography>
+              </Box>
               <Box sx={{ width: '100%' }}>
                 <ImageUpload
                   onImageSelect={handleImageSelect}
@@ -203,13 +209,12 @@ const HTNPage: React.FC<HomePageProps> = ({ apiReady }) => {
                     fontSize: '1.05rem',
                     py: 1.75,
                     borderRadius: 2,
-                    background: 'linear-gradient(135deg, #6A4DF5 0%, #8B6FFF 100%)',
-                    boxShadow: '0 4px 16px rgba(106, 77, 245, 0.3)',
+                    backgroundColor: '#5939E0',
+                    boxShadow: '0 2px 8px rgba(89, 57, 224, 0.2)',
                     transition: 'all 0.15s ease',
                     '&:hover': {
-                      transform: 'scale(1.02)',
-                      boxShadow: '0 6px 24px rgba(106, 77, 245, 0.4)',
-                      background: 'linear-gradient(135deg, #5939E0 0%, #7A5FEE 100%)',
+                      backgroundColor: '#4A2DB0',
+                      boxShadow: '0 4px 12px rgba(89, 57, 224, 0.25)',
                     },
                   }}
                 >
@@ -219,7 +224,10 @@ const HTNPage: React.FC<HomePageProps> = ({ apiReady }) => {
                       Analyzing...
                     </Box>
                   ) : (
-                    '🔍 Analyze Image'
+                    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                      <SearchIcon sx={{ fontSize: '1.2rem' }} />
+                      Analyze Image
+                    </Box>
                   )}
                 </Button>
                 {image && (
@@ -228,7 +236,15 @@ const HTNPage: React.FC<HomePageProps> = ({ apiReady }) => {
                     fullWidth
                     onClick={handleClear}
                     disabled={loading}
-                    sx={{ fontWeight: 600 }}
+                    sx={{
+                      fontWeight: 600,
+                      color: '#ef4444',
+                      borderColor: '#ef4444',
+                      '&:hover': {
+                        backgroundColor: '#fee2e2',
+                        borderColor: '#dc2626',
+                      },
+                    }}
                   >
                     Clear
                   </Button>
@@ -257,51 +273,35 @@ const HTNPage: React.FC<HomePageProps> = ({ apiReady }) => {
                     <Card
                       sx={{
                         p: 4,
-                        background: result.prediction === 1
-                          ? 'linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%)'
-                          : 'linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%)',
-                        border: `3px solid ${result.prediction === 1 ? '#d32f2f' : '#388e3c'}`,
-                        borderRadius: 2,
-                        boxShadow: result.prediction === 1
-                          ? '0 8px 24px rgba(211, 47, 47, 0.2)'
-                          : '0 8px 24px rgba(56, 142, 60, 0.2)',
-                        transition: 'all 0.3s ease',
-                        position: 'relative',
-                        overflow: 'hidden',
-                        '&::before': {
-                          content: '""',
-                          position: 'absolute',
-                          top: -2,
-                          left: -2,
-                          right: -2,
-                          bottom: -2,
-                          background: result.prediction === 1
-                            ? 'linear-gradient(135deg, #d32f2f, #f44336)'
-                            : 'linear-gradient(135deg, #388e3c, #66bb6a)',
-                          opacity: 0.1,
-                          zIndex: -1,
-                        },
+                        backgroundColor: '#ffffff',
+                        borderLeft: `5px solid ${result.prediction === 1 ? '#ef4444' : '#10b981'}`,
+                        borderRadius: 1,
+                        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08)',
                       }}
                     >
-                      <Typography variant="overline" sx={{ mb: 1, fontWeight: 700, color: '#666', letterSpacing: 1, fontSize: '0.8rem' }}>
-                        📊 Analysis Result
-                      </Typography>
-                      <Typography
-                        variant="h2"
-                        sx={{
-                          fontWeight: 900,
-                          mb: 2,
-                          fontSize: '2.8rem',
-                          color: result.prediction === 1 ? '#d32f2f' : '#388e3c',
-                          animation: 'pulse 2s ease-in-out infinite',
-                          '@keyframes pulse': {
-                            '0%, 100%': { opacity: 1 },
-                            '50%': { opacity: 0.8 },
-                          },
-                        }}
-                      >
-                        {result.prediction === 1 ? '⚠️ DETECTED' : '✓ NOT DETECTED'}
-                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
+                        <BarChartIcon sx={{ fontSize: '1rem', color: '#666' }} />
+                        <Typography variant="overline" sx={{ fontWeight: 700, color: '#666', letterSpacing: 1, fontSize: '0.8rem' }}>
+                          Analysis Result
+                        </Typography>
+                      </Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2, justifyContent: 'center' }}>
+                        {result.prediction === 1 ? (
+                          <WarningIcon sx={{ fontSize: '2.5rem', color: '#ef4444' }} />
+                        ) : (
+                          <CheckCircleIcon sx={{ fontSize: '2.5rem', color: '#10b981' }} />
+                        )}
+                        <Typography
+                          variant="h2"
+                          sx={{
+                            fontWeight: 900,
+                            fontSize: '2.8rem',
+                            color: result.prediction === 1 ? '#ef4444' : '#10b981',
+                          }}
+                        >
+                          {result.prediction === 1 ? 'DETECTED' : 'NOT DETECTED'}
+                        </Typography>
+                      </Box>
                       <Box sx={{ mb: 2 }}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                           <Typography variant="body2" sx={{ fontWeight: 500 }}>
@@ -355,9 +355,19 @@ const HTNPage: React.FC<HomePageProps> = ({ apiReady }) => {
                       <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5, color: '#0066cc' }}>
                         Clinical Interpretation
                       </Typography>
-                      <Typography variant="body2" sx={{ color: '#555', lineHeight: 1.8, fontSize: '0.95rem' }}>
+                      <Typography variant="body2" sx={{ color: '#555', lineHeight: 1.8, fontSize: '0.95rem', mb: 2 }}>
                         {result.label}
                       </Typography>
+                      <ExportButtons
+                        data={{
+                          prediction: result.prediction,
+                          probability: result.probability,
+                          confidence: result.confidence,
+                          label: result.label,
+                          timestamp: new Date().toISOString(),
+                        }}
+                        filename="htn_analysis"
+                      />
                     </Paper>
                   </Box>
                 </Grow>

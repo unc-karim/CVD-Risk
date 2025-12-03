@@ -9,7 +9,7 @@ import {
   Button,
   Card,
   CircularProgress,
-  
+
   Grid,
   Paper,
   TextField,
@@ -19,7 +19,10 @@ import {
   Radio,
   Grow,
 } from '@mui/material';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import StraightIcon from '@mui/icons-material/Straight';
 import ImageUpload from '../components/ImageUpload';
+import ExportButtons from '../components/ExportButtons';
 import api, { CIMTResult } from '../services/api';
 
 interface CIMTPageProps {
@@ -81,40 +84,49 @@ const CIMTPage: React.FC<CIMTPageProps> = ({ apiReady }) => {
   };
 
   return (
-    <Box sx={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, width: '100vw', height: '100vh', minHeight: '100vh', minWidth: '100vw', background: 'linear-gradient(135deg, #F8F5FF 0%, #EDE7FF 100%)', overflow: 'auto' }}>
+    <Box sx={{ width: '100%', minHeight: '100vh', background: '#ffffff', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
       <Box
         sx={{
-          background: 'linear-gradient(135deg, #6A4DF5 0%, #A680FF 100%)',
+          background: 'linear-gradient(135deg, #5939E0 0%, #9D7FFF 100%)',
           color: 'white',
-          py: { xs: 4, md: 5 },
-          px: { xs: 3, sm: 4 },
-          mb: 6,
-          borderBottomLeftRadius: { xs: 24, sm: 32 },
-          borderBottomRightRadius: { xs: 24, sm: 32 },
+          py: { xs: 3, sm: 4, md: 5 },
+          px: { xs: 2, sm: 3, md: 4 },
+          mb: { xs: 4, md: 6 },
+          borderBottomLeftRadius: { xs: 16, sm: 24, md: 32 },
+          borderBottomRightRadius: { xs: 16, sm: 24, md: 32 },
           boxShadow: '0 8px 32px rgba(106, 77, 245, 0.25)',
         }}
       >
-        <Box sx={{ maxWidth: 1200, mx: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: { xs: 2, sm: 4 } }}>
+        <Box sx={{ maxWidth: 1200, mx: 'auto', display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'flex-start', sm: 'center' }, justifyContent: 'space-between', gap: { xs: 3, sm: 2, md: 4 } }}>
           <Box sx={{ flex: 1 }}>
-            <Typography variant="h2" sx={{ fontWeight: 800, mb: 1, fontSize: { xs: '1.8rem', sm: '2rem', md: '2.4rem' }, letterSpacing: '-0.3px' }}>
+            <Typography
+              component="h1"
+              variant="h2"
+              sx={{
+                mb: 1,
+              }}
+            >
               CIMT Prediction
             </Typography>
-            <Typography variant="body1" sx={{ opacity: 0.9, fontWeight: 400, fontSize: { xs: '0.95rem', sm: '1rem' }, lineHeight: 1.5 }}>
+            <Typography variant="body1" sx={{ opacity: 0.85 }}>
               Carotid intima-media thickness estimation from retinal and clinical data
             </Typography>
           </Box>
-          <Box sx={{ display: 'flex', gap: 2, flexShrink: 0, flexWrap: { xs: 'wrap', sm: 'nowrap' } }}>
+          <Box sx={{ display: 'flex', gap: 1.5, flexShrink: 0, flexWrap: 'wrap', justifyContent: { xs: 'flex-start', sm: 'flex-end' } }}>
             <Button
               onClick={() => navigate('/')}
               disabled={loading}
+              variant="text"
               sx={{
-                textTransform: 'none',
-                backgroundColor: 'rgba(255,255,255,0.2)',
                 color: 'white',
                 fontWeight: 600,
-                transition: 'all 0.15s ease',
-                '&:hover': { backgroundColor: 'rgba(255,255,255,0.3)', transform: 'scale(1.02)' },
+                fontSize: '0.95rem',
+                py: 1,
+                px: 2,
+                '&:hover': {
+                  backgroundColor: 'rgba(255,255,255,0.1)',
+                },
               }}
             >
               ← Home
@@ -122,13 +134,19 @@ const CIMTPage: React.FC<CIMTPageProps> = ({ apiReady }) => {
             <Button
               onClick={handleClearAll}
               disabled={loading}
-              variant="contained"
+              variant="outlined"
               sx={{
-                backgroundColor: 'white',
-                color: '#6A4DF5',
-                fontWeight: 700,
+                color: 'white',
+                borderColor: 'white',
+                fontWeight: 600,
+                fontSize: '0.95rem',
+                py: 1,
+                px: 3,
                 transition: 'all 0.15s ease',
-                '&:hover': { backgroundColor: '#f5f5f5', transform: 'scale(1.02)' },
+                '&:hover': {
+                  backgroundColor: 'rgba(255,255,255,0.1)',
+                  borderColor: 'white',
+                },
               }}
             >
               Clear All
@@ -136,8 +154,8 @@ const CIMTPage: React.FC<CIMTPageProps> = ({ apiReady }) => {
           </Box>
         </Box>
       </Box>
-      <Box sx={{ pb: 6, width: '100vw' }}>
-        <Grid container spacing={3} sx={{ width: '100vw', maxWidth: '1600px', mx: 'auto' }}>
+      <Box sx={{ py: 6, width: '100%' }}>
+        <Grid container spacing={3} sx={{ width: '100%', maxWidth: '1200px', mx: 'auto', px: { xs: 2, sm: 3, md: 4 } }}>
           <Grid item xs={12}>
             <Paper sx={{ p: 3, backgroundColor: '#f8faff', maxWidth: 700, mx: 'auto' }}>
               <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#0066cc' }}>
@@ -188,10 +206,18 @@ const CIMTPage: React.FC<CIMTPageProps> = ({ apiReady }) => {
                         <Button
                           size="small"
                           variant="outlined"
-                          color="error"
                           onClick={handleClearLeftImage}
-                          sx={{ mt: 1, width: '100%' }}
                           disabled={loading}
+                          sx={{
+                            mt: 1,
+                            width: '100%',
+                            color: '#ef4444',
+                            borderColor: '#ef4444',
+                            '&:hover': {
+                              backgroundColor: '#fee2e2',
+                              borderColor: '#dc2626',
+                            },
+                          }}
                         >
                           Clear Image
                         </Button>
@@ -209,10 +235,18 @@ const CIMTPage: React.FC<CIMTPageProps> = ({ apiReady }) => {
                         <Button
                           size="small"
                           variant="outlined"
-                          color="error"
                           onClick={handleClearRightImage}
-                          sx={{ mt: 1, width: '100%' }}
                           disabled={loading}
+                          sx={{
+                            mt: 1,
+                            width: '100%',
+                            color: '#ef4444',
+                            borderColor: '#ef4444',
+                            '&:hover': {
+                              backgroundColor: '#fee2e2',
+                              borderColor: '#dc2626',
+                            },
+                          }}
                         >
                           Clear Image
                         </Button>
@@ -228,7 +262,18 @@ const CIMTPage: React.FC<CIMTPageProps> = ({ apiReady }) => {
                 onClick={handlePredict}
                 disabled={!leftImage || loading || !apiReady}
                 size="large"
-                sx={{ mt: 3, fontWeight: 700, fontSize: '1.1rem', py: 2 }}
+                sx={{
+                  mt: 3,
+                  fontWeight: 700,
+                  fontSize: '1.1rem',
+                  py: 2,
+                  backgroundColor: '#5939E0',
+                  boxShadow: '0 2px 8px rgba(89, 57, 224, 0.2)',
+                  '&:hover': {
+                    backgroundColor: '#4A2DB0',
+                    boxShadow: '0 4px 12px rgba(89, 57, 224, 0.25)',
+                  },
+                }}
               >
                 {loading ? (
                   <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
@@ -236,7 +281,10 @@ const CIMTPage: React.FC<CIMTPageProps> = ({ apiReady }) => {
                     Calculating...
                   </Box>
                 ) : (
-                  '📏 Estimate CIMT'
+                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                    <StraightIcon sx={{ fontSize: '1.2rem' }} />
+                    Estimate CIMT
+                  </Box>
                 )}
               </Button>
 
@@ -256,49 +304,24 @@ const CIMTPage: React.FC<CIMTPageProps> = ({ apiReady }) => {
                     <Card
                       sx={{
                         p: 4,
-                        background:
+                        backgroundColor: '#ffffff',
+                        borderLeft: `5px solid ${
                           result.risk_category === 'Elevated'
-                            ? 'linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%)'
+                            ? '#ef4444'
                             : result.risk_category === 'Borderline'
-                            ? 'linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%)'
-                            : 'linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%)',
-                        border: `3px solid ${
-                          result.risk_category === 'Elevated'
-                            ? '#d32f2f'
-                            : result.risk_category === 'Borderline'
-                            ? '#f57c00'
-                            : '#388e3c'
+                            ? '#f59e0b'
+                            : '#10b981'
                         }`,
-                        borderRadius: 2,
-                        boxShadow:
-                          result.risk_category === 'Elevated'
-                            ? '0 8px 24px rgba(211, 47, 47, 0.2)'
-                            : result.risk_category === 'Borderline'
-                            ? '0 8px 24px rgba(245, 127, 0, 0.2)'
-                            : '0 8px 24px rgba(56, 142, 60, 0.2)',
-                        transition: 'all 0.3s ease',
-                        position: 'relative',
-                        overflow: 'hidden',
-                        '&::before': {
-                          content: '""',
-                          position: 'absolute',
-                          top: -2,
-                          left: -2,
-                          right: -2,
-                          bottom: -2,
-                          background: result.risk_category === 'Elevated'
-                            ? 'linear-gradient(135deg, #d32f2f, #f44336)'
-                            : result.risk_category === 'Borderline'
-                            ? 'linear-gradient(135deg, #f57c00, #ffe0b2)'
-                            : 'linear-gradient(135deg, #388e3c, #66bb6a)',
-                          opacity: 0.1,
-                          zIndex: -1,
-                        },
+                        borderRadius: 1,
+                        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08)',
                       }}
                     >
-                      <Typography variant="overline" sx={{ mb: 1, fontWeight: 700, color: '#666', letterSpacing: 1 }}>
-                        📊 CIMT Measurement
-                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
+                        <BarChartIcon sx={{ fontSize: '1rem', color: '#666' }} />
+                        <Typography variant="overline" sx={{ fontWeight: 700, color: '#666', letterSpacing: 1 }}>
+                          CIMT Measurement
+                        </Typography>
+                      </Box>
                       <Typography
                         variant="h2"
                         sx={{
@@ -307,15 +330,10 @@ const CIMTPage: React.FC<CIMTPageProps> = ({ apiReady }) => {
                           fontSize: '2.5rem',
                           color:
                             result.risk_category === 'Elevated'
-                              ? '#d32f2f'
+                              ? '#ef4444'
                               : result.risk_category === 'Borderline'
-                              ? '#f57c00'
-                              : '#388e3c',
-                          animation: 'pulse 2s ease-in-out infinite',
-                          '@keyframes pulse': {
-                            '0%, 100%': { opacity: 1 },
-                            '50%': { opacity: 0.8 },
-                          },
+                              ? '#f59e0b'
+                              : '#10b981',
                         }}
                       >
                         {result.value_mm.toFixed(3)} mm
@@ -332,10 +350,10 @@ const CIMTPage: React.FC<CIMTPageProps> = ({ apiReady }) => {
                             fontSize: '1.1rem',
                             color:
                               result.risk_category === 'Elevated'
-                                ? '#d32f2f'
+                                ? '#ef4444'
                                 : result.risk_category === 'Borderline'
-                                ? '#f57c00'
-                                : '#388e3c',
+                                ? '#f59e0b'
+                                : '#10b981',
                           }}
                         >
                           {result.risk_category}
@@ -357,9 +375,19 @@ const CIMTPage: React.FC<CIMTPageProps> = ({ apiReady }) => {
                       <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5, color: '#0066cc' }}>
                         Clinical Significance
                       </Typography>
-                      <Typography variant="body2" sx={{ color: '#555', lineHeight: 1.8, fontSize: '0.95rem' }}>
+                      <Typography variant="body2" sx={{ color: '#555', lineHeight: 1.8, fontSize: '0.95rem', mb: 2 }}>
                         {result.clinical_significance}
                       </Typography>
+                      <ExportButtons
+                        data={{
+                          value_mm: result.value_mm,
+                          threshold_mm: result.threshold_mm,
+                          risk_category: result.risk_category,
+                          clinical_significance: result.clinical_significance,
+                          timestamp: new Date().toISOString(),
+                        }}
+                        filename="cimt_analysis"
+                      />
                     </Paper>
                   </Box>
                 </Grow>

@@ -111,9 +111,20 @@ class FusionFeatureExtractor:
         vessel_clinical_avg = (vessel_clinical_L + vessel_clinical_R) / 2.0
 
         vessel_features = np.concatenate([vessel_learned_avg, vessel_clinical_avg])  # [271]
+
+        # Store all vessel clinical features in metadata for API response
+        # Clinical features (15 total): [vessel_density, peripheral_density, density_gradient,
+        # avg_vessel_thickness, num_vessel_segments, spatial_uniformity, avg_tortuosity,
+        # max_tortuosity, avg_vessel_width, vessel_width_std, width_cv, fractal_dimension,
+        # branching_density, connectivity_index, texture_variance]
         metadata['vessel_density_left'] = float(vessel_clinical_L[0])
         metadata['vessel_density_right'] = float(vessel_clinical_R[0])
         metadata['vessel_density_avg'] = float(vessel_clinical_avg[0])
+        metadata['peripheral_density_avg'] = float(vessel_clinical_avg[1])
+        metadata['avg_vessel_width_avg'] = float(vessel_clinical_avg[8])
+        metadata['fractal_dimension_avg'] = float(vessel_clinical_avg[11])
+        metadata['branching_density_avg'] = float(vessel_clinical_avg[12])
+        metadata['avg_tortuosity_avg'] = float(vessel_clinical_avg[6])
 
         # ====================================================================
         # CONCATENATE ALL: 1025 + 129 + 271 = 1425

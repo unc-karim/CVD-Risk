@@ -3,80 +3,136 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Box, Container, Typography } from '@mui/material';
+import WarningIcon from '@mui/icons-material/Warning';
 
 import api from './services/api';
+import Navigation from './components/Navigation';
 import HomePage from './pages/HomePage';
 import HTNPage from './pages/HTNPage';
 import CIMTPage from './pages/CIMTPage';
 import VesselPage from './pages/VesselPage';
 import FusionPage from './pages/FusionPage';
+import AboutPage from './pages/AboutPage';
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#6A4DF5', // Modern purple
-      light: '#8B6FFF',
-      dark: '#5739D6',
+      main: '#5939E0', // Refined purple
+      light: '#7A5FEE',
+      dark: '#4A2DB0',
       contrastText: '#ffffff',
     },
     secondary: {
-      main: '#A680FF', // Light purple
-      light: '#B89FFF',
-      dark: '#9366FF',
+      main: '#9D7FFF', // Adjusted light purple
+      light: '#B5A0FF',
+      dark: '#7B5FCC',
       contrastText: '#ffffff',
     },
     success: {
-      main: '#4caf50', // Green for low risk
+      main: '#10B981', // Refined green for low risk
+      light: '#6EE7B7',
+      dark: '#047857',
     },
     warning: {
-      main: '#ff9800', // Orange for medium risk
+      main: '#F59E0B', // Refined orange for medium risk
+      light: '#FCD34D',
+      dark: '#D97706',
     },
     error: {
-      main: '#f44336', // Red for high risk
+      main: '#EF4444', // Refined red for high risk
+      light: '#FCA5A5',
+      dark: '#B91C1C',
+    },
+    info: {
+      main: '#3B82F6',
+      light: '#93C5FD',
+      dark: '#1E40AF',
+    },
+    text: {
+      primary: '#1F2937',
+      secondary: '#6B7280',
+      disabled: '#9CA3AF',
     },
     background: {
-      default: '#F8F5FF',
-      paper: '#ffffff',
+      default: '#F9FAFB',
+      paper: '#FFFFFF',
     },
+    divider: 'rgba(93, 57, 224, 0.08)',
   },
   typography: {
-    fontFamily: '"Inter", "Poppins", "Segoe UI", "Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily: '"Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica Neue", sans-serif',
     h1: {
       fontSize: '3rem',
       fontWeight: 800,
       letterSpacing: '-0.5px',
+      color: '#1F2937',
+      lineHeight: 1.2,
     },
     h2: {
       fontSize: '2rem',
       fontWeight: 700,
       letterSpacing: '-0.3px',
+      color: '#1F2937',
+      lineHeight: 1.3,
     },
     h3: {
       fontSize: '1.5rem',
       fontWeight: 600,
+      color: '#1F2937',
+      lineHeight: 1.4,
     },
     h4: {
       fontSize: '1.375rem',
       fontWeight: 600,
+      color: '#1F2937',
+      lineHeight: 1.4,
     },
     h5: {
       fontSize: '1.25rem',
       fontWeight: 600,
+      color: '#1F2937',
+      lineHeight: 1.5,
     },
     h6: {
       fontSize: '1rem',
       fontWeight: 600,
+      color: '#1F2937',
+      lineHeight: 1.5,
     },
     body1: {
       fontSize: '1rem',
       lineHeight: 1.6,
+      color: '#374151',
     },
     body2: {
       fontSize: '0.9rem',
+      lineHeight: 1.5,
+      color: '#6B7280',
+    },
+    caption: {
+      fontSize: '0.875rem',
+      color: '#6B7280',
+      fontWeight: 500,
+      lineHeight: 1.4,
+    },
+    button: {
+      textTransform: 'none',
+      fontWeight: 600,
+    },
+    subtitle1: {
+      fontSize: '1.1rem',
+      fontWeight: 600,
+      color: '#1F2937',
+      lineHeight: 1.5,
+    },
+    subtitle2: {
+      fontSize: '0.95rem',
+      fontWeight: 600,
+      color: '#374151',
       lineHeight: 1.5,
     },
   },
@@ -85,57 +141,67 @@ const theme = createTheme({
   },
   shadows: [
     'none',
-    '0 2px 8px rgba(0, 0, 0, 0.08)',
+    '0 1px 3px rgba(0, 0, 0, 0.08)',
     '0 4px 12px rgba(0, 0, 0, 0.10)',
-    '0 6px 16px rgba(0, 0, 0, 0.12)',
     '0 8px 24px rgba(0, 0, 0, 0.12)',
-    '0 10px 28px rgba(0, 0, 0, 0.13)',
     '0 12px 32px rgba(0, 0, 0, 0.15)',
-    '0 14px 36px rgba(0, 0, 0, 0.15)',
-    '0 16px 40px rgba(0, 0, 0, 0.16)',
-    '0 18px 44px rgba(0, 0, 0, 0.16)',
-    '0 20px 48px rgba(0, 0, 0, 0.17)',
-    '0 22px 52px rgba(0, 0, 0, 0.17)',
-    '0 24px 56px rgba(0, 0, 0, 0.18)',
-    '0 26px 60px rgba(0, 0, 0, 0.18)',
-    '0 28px 64px rgba(0, 0, 0, 0.19)',
-    '0 30px 68px rgba(0, 0, 0, 0.19)',
-    '0 32px 72px rgba(0, 0, 0, 0.20)',
-    '0 36px 80px rgba(0, 0, 0, 0.20)',
-    '0 40px 88px rgba(0, 0, 0, 0.21)',
-    '0 48px 104px rgba(0, 0, 0, 0.22)',
-    '0 56px 120px rgba(0, 0, 0, 0.23)',
-    '0 64px 136px rgba(0, 0, 0, 0.24)',
-    '0 80px 160px rgba(0, 0, 0, 0.25)',
-    '0 96px 184px rgba(0, 0, 0, 0.26)',
-    '0 112px 208px rgba(0, 0, 0, 0.27)',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
   ],
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
           textTransform: 'none',
-          fontWeight: 700,
-          borderRadius: 12,
-          padding: '12px 28px',
-          transition: 'all 0.15s ease',
-          fontSize: '1rem',
+          fontWeight: 600,
+          borderRadius: 10,
+          padding: '10px 24px',
+          transition: 'all 0.2s cubic-bezier(0.23, 1, 0.32, 1)',
+          fontSize: '0.95rem',
         },
         contained: {
-          background: 'linear-gradient(135deg, #6A4DF5 0%, #8B6FFF 100%)',
-          boxShadow: '0 4px 12px rgba(106, 77, 245, 0.25)',
+          backgroundColor: '#5939E0',
+          boxShadow: '0 1px 3px rgba(89, 57, 224, 0.15)',
+          color: '#ffffff',
           '&:hover': {
-            transform: 'scale(1.02)',
-            boxShadow: '0 6px 24px rgba(106, 77, 245, 0.35)',
-            background: 'linear-gradient(135deg, #5939E0 0%, #7A5FEE 100%)',
+            backgroundColor: '#4A2DB0',
+            boxShadow: '0 4px 12px rgba(89, 57, 224, 0.2)',
+          },
+          '&:active': {
+            transform: 'scale(0.98)',
           },
         },
         outlined: {
-          borderColor: '#6A4DF5',
-          color: '#6A4DF5',
+          borderColor: '#5939E0',
+          color: '#5939E0',
+          border: '1.5px solid',
           '&:hover': {
-            backgroundColor: 'rgba(106, 77, 245, 0.04)',
-            borderColor: '#5939E0',
+            backgroundColor: 'rgba(89, 57, 224, 0.06)',
+            borderColor: '#4A2DB0',
+          },
+        },
+        text: {
+          color: '#5939E0',
+          '&:hover': {
+            backgroundColor: 'rgba(89, 57, 224, 0.08)',
           },
         },
       },
@@ -143,12 +209,14 @@ const theme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 24,
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.10)',
-          transition: 'all 0.15s ease',
+          borderRadius: 16,
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.08)',
+          transition: 'all 0.2s ease',
+          border: '1px solid rgba(93, 57, 224, 0.06)',
+          backgroundColor: '#FFFFFF',
           '&:hover': {
-            transform: 'scale(1.02)',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.12), 0 8px 24px rgba(89, 57, 224, 0.12)',
+            transform: 'translateY(-2px)',
           },
         },
       },
@@ -157,15 +225,17 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           backgroundImage: 'none',
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.10)',
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.08)',
+          border: '1px solid rgba(93, 57, 224, 0.06)',
         },
       },
     },
     MuiAppBar: {
       styleOverrides: {
         root: {
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.10)',
-          backgroundImage: 'linear-gradient(135deg, #6A4DF5 0%, #A680FF 100%)',
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08)',
+          backgroundColor: '#ffffff',
+          backgroundImage: 'none',
         },
       },
     },
@@ -173,14 +243,49 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           '& .MuiOutlinedInput-root': {
-            borderRadius: 12,
-            transition: 'all 0.15s ease',
-            '&:hover fieldset': {
-              borderColor: '#6A4DF5',
+            borderRadius: 10,
+            transition: 'all 0.2s ease',
+            backgroundColor: '#F9FAFB',
+            border: '1.5px solid #E5E7EB',
+            '&:hover': {
+              backgroundColor: '#F3F4F6',
+              borderColor: '#D1D5DB',
             },
-            '&.Mui-focused fieldset': {
-              borderColor: '#6A4DF5',
-              borderWidth: 2,
+            '&.Mui-focused': {
+              backgroundColor: '#FFFFFF',
+              borderColor: '#5939E0',
+              boxShadow: '0 0 0 3px rgba(89, 57, 224, 0.1)',
+            },
+            '& fieldset': {
+              borderColor: 'transparent',
+            },
+          },
+          '& .MuiOutlinedInput-input': {
+            color: '#1F2937',
+            '&::placeholder': {
+              color: '#9CA3AF',
+              opacity: 1,
+            },
+          },
+        },
+      },
+    },
+    MuiRadio: {
+      styleOverrides: {
+        root: {
+          '&.Mui-checked': {
+            color: '#5939E0',
+          },
+        },
+      },
+    },
+    MuiSwitch: {
+      styleOverrides: {
+        root: {
+          '& .MuiSwitch-switchBase.Mui-checked': {
+            color: '#5939E0',
+            '& + .MuiSwitch-track': {
+              backgroundColor: '#5939E0',
             },
           },
         },
@@ -188,6 +293,88 @@ const theme = createTheme({
     },
   },
 });
+
+const AppContent: React.FC<{ apiReady: boolean }> = ({ apiReady }) => {
+  const location = useLocation();
+  const isHome = location.pathname === '/';
+
+  return (
+    <>
+      <Navigation />
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: { xs: 'calc(100vh - 56px)', sm: 'calc(100vh - 64px)' },
+          background: '#ffffff',
+        }}
+      >
+        {/* Main Content */}
+        <Container
+          maxWidth={isHome ? 'xl' : 'lg'}
+          disableGutters={isHome}
+          sx={{
+            py: isHome ? 0 : 4,
+            px: isHome ? { xs: 2, sm: 3, md: 4 } : undefined,
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          {!apiReady && (
+            <Box
+              sx={{
+                mb: 3,
+                p: 2,
+                backgroundColor: '#fff3cd',
+                border: '1px solid #ffc107',
+                borderRadius: 1,
+                color: '#856404',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+              }}
+            >
+              <WarningIcon sx={{ fontSize: '1.2rem' }} />
+              API is not ready. Predictions may not work correctly.
+            </Box>
+          )}
+
+          <Routes>
+            <Route path="/" element={<HomePage apiReady={apiReady} />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/htn" element={<HTNPage apiReady={apiReady} />} />
+            <Route path="/cimt" element={<CIMTPage apiReady={apiReady} />} />
+            <Route path="/vessel" element={<VesselPage apiReady={apiReady} />} />
+            <Route path="/fusion" element={<FusionPage apiReady={apiReady} />} />
+          </Routes>
+        </Container>
+
+        {/* Footer */}
+        <Box
+          component="footer"
+          sx={{
+            py: 4,
+            px: { xs: 2, sm: 4 },
+            mt: 'auto',
+            background: 'rgba(255, 255, 255, 0.5)',
+            borderTop: '1px solid rgba(106, 77, 245, 0.1)',
+            textAlign: 'center',
+            color: '#666',
+            backdropFilter: 'blur(10px)',
+          }}
+        >
+          <Typography variant="body2" sx={{ mb: 1, fontWeight: 600, color: '#333' }}>
+            CVD Risk Prediction System v1.0
+          </Typography>
+          <Typography variant="caption" sx={{ color: '#888', fontSize: '0.85rem' }}>
+            Research Tool - Not Approved for Clinical Diagnosis | Consult Healthcare Professionals
+          </Typography>
+        </Box>
+      </Box>
+    </>
+  );
+};
 
 function App() {
   const [apiReady, setApiReady] = useState(false);
@@ -253,62 +440,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            minHeight: '100vh',
-            background: 'linear-gradient(135deg, #F8F5FF 0%, #EDE7FF 100%)',
-          }}
-        >
-          {/* Main Content */}
-          <Container maxWidth="lg" sx={{ py: 4, flex: 1 }}>
-            {!apiReady && (
-              <Box
-                sx={{
-                  mb: 3,
-                  p: 2,
-                  backgroundColor: '#fff3cd',
-                  border: '1px solid #ffc107',
-                  borderRadius: 1,
-                  color: '#856404',
-                }}
-              >
-                ⚠️ API is not ready. Predictions may not work correctly.
-              </Box>
-            )}
-
-            <Routes>
-              <Route path="/" element={<HomePage apiReady={apiReady} />} />
-              <Route path="/htn" element={<HTNPage apiReady={apiReady} />} />
-              <Route path="/cimt" element={<CIMTPage apiReady={apiReady} />} />
-              <Route path="/vessel" element={<VesselPage apiReady={apiReady} />} />
-              <Route path="/fusion" element={<FusionPage apiReady={apiReady} />} />
-            </Routes>
-          </Container>
-
-          {/* Footer */}
-          <Box
-            component="footer"
-            sx={{
-              py: 4,
-              px: { xs: 2, sm: 4 },
-              mt: 'auto',
-              background: 'rgba(255, 255, 255, 0.5)',
-              borderTop: '1px solid rgba(106, 77, 245, 0.1)',
-              textAlign: 'center',
-              color: '#666',
-              backdropFilter: 'blur(10px)',
-            }}
-          >
-            <Typography variant="body2" sx={{ mb: 1, fontWeight: 600, color: '#333' }}>
-              CVD Risk Prediction System v1.0
-            </Typography>
-            <Typography variant="caption" sx={{ color: '#888', fontSize: '0.85rem' }}>
-              Research Tool - Not Approved for Clinical Diagnosis | Consult Healthcare Professionals
-            </Typography>
-          </Box>
-        </Box>
+        <AppContent apiReady={apiReady} />
       </Router>
     </ThemeProvider>
   );
