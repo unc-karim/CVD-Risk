@@ -7,12 +7,6 @@ fusion/
 *.pkl
 *.joblib
 
-# Notebooks
-segmentation.ipynb
-deep_fusion.ipynb
-deep_fusion_chinese_cimt.ipynb
-hypertension_use.ipynb
-
 # Backend
 backend/__pycache__/
 backend/.venv/
