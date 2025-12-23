@@ -326,7 +326,6 @@ class ModelLoader:
                 )
 
             # Extract standardization parameters
-            import numpy as np
             fusion_mean = ckpt['standardization']['fusion_mean']
             fusion_std = ckpt['standardization']['fusion_std']
 

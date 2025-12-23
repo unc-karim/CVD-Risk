@@ -99,6 +99,11 @@ Run tests without large weights:
 USE_DUMMY_MODEL=1 pytest
 ```
 
+Sync requirements from repo imports:
+```bash
+python scripts/extract_requirements.py --dry-run
+```
+
 ## License
 
 MIT (see LICENSE).

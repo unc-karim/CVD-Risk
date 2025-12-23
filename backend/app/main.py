@@ -76,6 +76,26 @@ class MetricsStore:
             "model_version": self.model_version,
         }
 
+
+class DummyFusionExtractor:
+    """Minimal extractor for dummy mode tests."""
+
+    def extract_all_features(self, left_image, right_image, age, gender):
+        features = np.zeros((1425,), dtype=np.float32)
+        mask = np.zeros((512, 512), dtype=np.float32)
+        metadata = {
+            "htn_probability": 0.0,
+            "cimt_prediction_mm": 0.0,
+            "vessel_mask_left": mask,
+            "vessel_density_avg": 0.0,
+            "peripheral_density_avg": 0.0,
+            "avg_vessel_width_avg": 0.0,
+            "fractal_dimension_avg": 0.0,
+            "branching_density_avg": 0.0,
+            "avg_tortuosity_avg": 0.0,
+        }
+        return features, metadata
+
 # ============================================================================
 # STARTUP/SHUTDOWN EVENTS
 # ============================================================================
@@ -115,12 +135,15 @@ async def lifespan(app: FastAPI):
             )
 
         logger.info("\nInitializing feature extractors...")
-        app.state.fusion_extractor = FusionFeatureExtractor(
-            htn_model=model_loader.get_model('htn'),
-            cimt_model=model_loader.get_model('cimt'),
-            vessel_model=model_loader.get_model('vessel'),
-            device=model_loader.device
-        )
+        if settings.USE_DUMMY_MODEL:
+            app.state.fusion_extractor = DummyFusionExtractor()
+        else:
+            app.state.fusion_extractor = FusionFeatureExtractor(
+                htn_model=model_loader.get_model('htn'),
+                cimt_model=model_loader.get_model('cimt'),
+                vessel_model=model_loader.get_model('vessel'),
+                device=model_loader.device
+            )
 
         logger.info("=" * 80)
         logger.info("✓ ALL SYSTEMS READY")
@@ -221,6 +244,19 @@ def mask_to_base64(mask: np.ndarray) -> str:
     b64_string = base64.b64encode(buffer.getvalue()).decode('utf-8')
     return f"data:image/png;base64,{b64_string}"
 
+def ensure_fusion_extractor() -> None:
+    """Ensure fusion extractor is initialized (dummy mode safe)."""
+
+    if hasattr(app.state, "fusion_extractor"):
+        return
+    if settings.USE_DUMMY_MODEL:
+        model_loader.load_htn_model(str(settings.HTN_CHECKPOINT))
+        model_loader.load_cimt_model(str(settings.CIMT_CHECKPOINT))
+        model_loader.load_vessel_model(str(settings.VESSEL_CHECKPOINT))
+        model_loader.load_fusion_model(str(settings.FUSION_CHECKPOINT))
+        app.state.fusion_extractor = DummyFusionExtractor()
+        return
+    raise RuntimeError("Fusion extractor not initialized. Ensure startup completed.")
 
 # ============================================================================
 # ENDPOINTS
@@ -261,6 +297,7 @@ async def predict_htn(file: UploadFile = File(...)):
     start_time = time.time()
 
     try:
+        ensure_fusion_extractor()
         # Validate image
         image_bytes = await file.read()
         image = validate_image(image_bytes)
@@ -332,6 +369,7 @@ async def predict_cimt(
     start_time = time.time()
 
     try:
+        ensure_fusion_extractor()
         # Validate inputs
         if age < 1 or age > 150:
             raise ValueError("Age must be between 1 and 150")
@@ -397,6 +435,7 @@ async def predict_vessel(file: UploadFile = File(...)):
     start_time = time.time()
 
     try:
+        ensure_fusion_extractor()
         # Validate image
         image_bytes = await file.read()
         image = validate_image(image_bytes)
@@ -471,6 +510,7 @@ async def predict_fusion(
     start_time = time.time()
 
     try:
+        ensure_fusion_extractor()
         # Validate inputs
         if age < 1 or age > 150:
             raise ValueError("Age must be between 1 and 150")
