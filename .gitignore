@@ -29,13 +29,13 @@ frontend/.DS_Store
 frontend/.env.*.local
 
 # Root level test files (temporary/development)
-test.py
-test_*.py
-*_test.py
-fusion_test.py
-test_all_fixes.py
-test_integration.py
-test_vessel_fix.py
+/test.py
+/test_*.py
+/*_test.py
+/fusion_test.py
+/test_all_fixes.py
+/test_integration.py
+/test_vessel_fix.py
 
 # Root level documentation (temporary reports)
 FINAL_VERIFICATION_REPORT.md
