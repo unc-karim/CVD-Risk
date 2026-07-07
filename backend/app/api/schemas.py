@@ -2,7 +2,7 @@
 Pydantic schemas for API request/response validation
 """
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional, List, Dict
 from enum import Enum
 
@@ -128,12 +128,14 @@ class ImageUploadRequest(BaseModel):
     """
 
     image: str = Field(..., description="Image file (base64 or file)")
-    class Config:
-        json_schema_extra = {
+
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "image": "<file_content>"
             }
         }
+    )
 
 
 class BilateralImageRequest(BaseModel):

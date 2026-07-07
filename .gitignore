@@ -1,5 +1,6 @@
 # Model weights and data
-weights/
+weights/*
+!weights/README.md
 pth/
 fusion/
 *.pth
